@@ -35,13 +35,14 @@ export const imageUpload = async (images) => {
 
         formData.append("upload_preset", uploadPreset);
 
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
             method: "POST",
             body: formData
         });
 
         if (!res.ok) {
-            throw new Error("Cloudinary upload failed.");
+            const uploadError = await res.json().catch(() => null);
+            throw new Error(uploadError?.error?.message || "Cloudinary upload failed.");
         }
 
         const data = await res.json();

@@ -26,14 +26,23 @@ export const imageUpload = async (images) => {
             formData.append("file", item);  
         }
 
-        
-        formData.append("upload_preset", "ADD VALUE HERE");
-        formData.append("cloud_name", "ADD VALUE HERE");
+        const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
 
-        const res = await fetch("ADD CLOUDINARY IMAGE UPLOAD LINK HERE", {
+        if (!cloudName || !uploadPreset) {
+            throw new Error("Missing Cloudinary config. Add REACT_APP_CLOUDINARY_CLOUD_NAME and REACT_APP_CLOUDINARY_UPLOAD_PRESET.");
+        }
+
+        formData.append("upload_preset", uploadPreset);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
             method: "POST",
             body: formData
-        })
+        });
+
+        if (!res.ok) {
+            throw new Error("Cloudinary upload failed.");
+        }
 
         const data = await res.json();
         imgArr.push({ public_id: data.public_id, url: data.secure_url });

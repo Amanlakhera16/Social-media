@@ -14,15 +14,18 @@ const Info = ({id, auth, profile, dispatch}) => {
 
     const [showFollowers, setShowFollowers] = useState(false);
     const [showFollowing, setShowFollowing] = useState(false);
+    const currentUserId = auth?.user?._id;
 
     useEffect(() => {
-      if (id === auth.user._id) {
+      if (!currentUserId) return;
+
+      if (id === currentUserId) {
           setUserData([auth.user]);
       }else{
         const newData = profile.users.filter(user => user._id === id);
         setUserData(newData);
       }
-    }, [id, auth, dispatch, profile.users]);
+    }, [id, auth, currentUserId, dispatch, profile.users]);
 
     useEffect(() => {
       if (showFollowers || showFollowing || onEdit) {
@@ -31,6 +34,8 @@ const Info = ({id, auth, profile, dispatch}) => {
         dispatch({ type: GLOBALTYPES.MODAL, payload: false });
       }
     }, [showFollowers, showFollowing, onEdit, dispatch]);
+
+    if (!auth?.user) return null;
 
     return (
       <div className="info">
@@ -46,7 +51,7 @@ const Info = ({id, auth, profile, dispatch}) => {
             <div className="info_content">
               <div className="info_content_title">
                 <h2>{user.username}</h2>
-                {user._id === auth.user._id ? (
+                {user._id === currentUserId ? (
                   <button
                     className="btn-1 outer-shadow hover-in-shadow"
                     onClick={() => setOnEdit(true)}
@@ -56,7 +61,7 @@ const Info = ({id, auth, profile, dispatch}) => {
                 ) : (
                   <FollowBtn user={user} />
                 )}
-                {user._id === auth.user._id ? (
+                {user._id === currentUserId ? (
                   <button
                     className="btn-1 outer-shadow hover-in-shadow"
                     onClick={() => setChangePassword(true)}

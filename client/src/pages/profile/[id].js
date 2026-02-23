@@ -13,19 +13,24 @@ const Profile = () => {
 
   const { id } = useParams();
   const [saveTab, setSaveTab] = useState(false);
+  const currentUserId = auth?.user?._id;
 
   useEffect(() => {
+    if (!id || !auth?.token) return;
+
     if(profile.ids.every(item => item !== id )){
       dispatch(getProfileUsers({ id, auth }));
 
     }
   }, [id, auth, dispatch, profile.ids]);
 
+  if (!auth?.user) return null;
+
     return (
       <div className="profile">
         <Info auth={auth} profile={profile} dispatch={dispatch} id={id} />
 
-        {auth.user._id === id && (
+        {currentUserId === id && (
           <div className="profile_tab">
             <button
               className={saveTab ? "" : "active"}

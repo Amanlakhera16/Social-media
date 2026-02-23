@@ -78,6 +78,9 @@
   place-items: center;
   grid-gap: 10px;
 }
+.status_body{
+color: black;
+}
 
 .status_body .show_images .file_img{
   position: relative;

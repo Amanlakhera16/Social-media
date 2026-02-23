@@ -16,7 +16,7 @@ const Status = () => {
           className="btn-1 outer-shadow hover-in-shadow statusBtn flex-fill "
           style={{ marginLeft: "7px" }}
         >
-          <span style={{ textShadow: "var(--outer-shadow)" }}>
+          <span style={{ textShadow: "var(--outer-shadow)" , color: 'black', fontWeight:150 }}>
             {auth.user.username}, What's on your mind?
           </span>
         </button>

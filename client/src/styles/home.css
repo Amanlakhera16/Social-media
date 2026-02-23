@@ -14,6 +14,8 @@
     margin: 0 5px;
     margin-left: 3px;
     font-size: 1.3rem;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 
@@ -23,7 +25,10 @@
 
 /* #region Posts */
 .posts .card{
-    /* box-shadow: 0 0 5px #ddd; */
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: var(--outer-shadow);
 }
 
 /* #endregion */
@@ -38,7 +43,8 @@
 }
 
 .posts .card_header .card_name{
-    transform: translateY(3px);
+    transform: translateY(2px);
+    font-weight: 600;
 }
 
 .posts .card_header .dropdown-menu{
@@ -54,7 +60,7 @@
 }
 
 .posts .card_header .dropdown-item:hover{
-    background: var(--pink);
+    background: var(--background-2);
 }
 
 .posts .card_header #moreLink{
@@ -69,11 +75,12 @@
     padding: 0 25px;
     margin-top: -10px;
     margin-bottom: 10px;
+    color: #1f2937;
 
 }
 
 .posts .card_body-content .readMore{
-    color: crimson;
+    color: var(--violet);
     cursor: pointer;
 }
 
@@ -85,11 +92,13 @@
     justify-content: space-between;
     padding: 0 15px;
     cursor: pointer;
+    border-top: 1px solid rgba(15, 23, 42, 0.06);
 }
 
 .posts .card_icon_menu i{
-    font-size: 28px;
+    font-size: 24px;
     margin: 10px;
+    color: #475569;
 }
 
 .posts .card_icon_menu img{

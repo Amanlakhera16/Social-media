@@ -7,8 +7,9 @@
     top: 0;
     left: 0;
     z-index: 2;
-    box-shadow: 0 0 10px #ddd;
-    background: #f8f9fa;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    background: rgba(248, 250, 252, 0.9);
+    backdrop-filter: blur(8px);
 }
 
 .header navbar{
@@ -20,7 +21,9 @@
 
 
 .header .logo h1{
-    font-size: 2rem;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+    color: var(--c1);
 }
 
 /* #endregion */ 
@@ -36,7 +39,7 @@
 }
 
 .header .menu .material-icons{
-    font-size: 30px;
+    font-size: 28px;
 }
 
 .header .menu .dropdown-menu{
@@ -50,7 +53,7 @@
 }
 
 .header .menu .dropdown-menu .dropdown-item:hover{
-    background: var(--c3);
+    background: var(--background-2);
     border-radius: 5px;
 }
 
@@ -108,13 +111,14 @@
 }
 
 .header .search_form #search{
-    background: #fafafa;
-    border: 1px solid #ddd;
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.1);
     min-width: 250px;
     width: 100%;
     outline: none;
     text-indent: 5px;
-    border-radius: 3px;
+    border-radius: 999px;
+    padding: 6px 10px;
 }
 
 .header .search_form .search_icon{

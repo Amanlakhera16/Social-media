@@ -6,6 +6,9 @@ export const TYPES = {
   AUTH: "AUTH",
 };
 
+const getErrorMsg = (err) =>
+  err?.response?.data?.msg || err?.message || "Something went wrong.";
+
 export const login = (data) => async (dispatch) => {
   try {
     dispatch({ type: GLOBALTYPES.ALERT, payload: { loading: true } });
@@ -26,7 +29,7 @@ export const login = (data) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };
@@ -71,7 +74,7 @@ export const changePassword = ({oldPassword, newPassword, cnfNewPassword, auth})
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };
@@ -96,7 +99,7 @@ export const adminLogin = (data) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };
@@ -121,7 +124,7 @@ export const refreshToken = () => async (dispatch) => {
     } catch (err) {
       dispatch({
         type: GLOBALTYPES.ALERT,
-        payload: { error: err.response.data.msg },
+        payload: { error: getErrorMsg(err) },
       });
     }
   }
@@ -153,7 +156,7 @@ export const register = (data) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };
@@ -173,7 +176,7 @@ export const registerAdmin = (data) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };
@@ -187,7 +190,7 @@ export const logout = () => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: GLOBALTYPES.ALERT,
-      payload: { error: err.response.data.msg },
+      payload: { error: getErrorMsg(err) },
     });
   }
 };

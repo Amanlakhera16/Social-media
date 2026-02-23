@@ -5,8 +5,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const SocketServer = require('./socketServer');
 const corsOptions = {
-  Credential: 'true',
-  
+  origin: "http://localhost:3000",
+  credentials: true,
 };
 
 

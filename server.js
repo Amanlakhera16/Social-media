@@ -27,10 +27,14 @@ const corsOptions = isProd
       origin: (origin, callback) => {
         if (!origin) return callback(null, true);
         const normalized = origin.replace(/\/+$/, '');
-        if (allowedOrigins.includes(normalized)) return callback(null, true);
+        if (allowedOrigins.includes(normalized) || normalized.endsWith('.netlify.app')) {
+          return callback(null, true);
+        }
         return callback(new Error('Not allowed by CORS'));
       },
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
     }
   : {
       origin: true,
@@ -43,7 +47,9 @@ app.use(cookieParser())
 
 //#region // !Socket
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  cors: corsOptions
+});
 
 
 

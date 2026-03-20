@@ -63,6 +63,11 @@ app.use('/api', require('./routes/notifyRouter'));
 app.use('/api', require('./routes/messageRouter'));
 //#endregion
 
+app.get('/', (req, res) => {
+  res.json({ msg: "SocioMatrix Server is running!" });
+});
+
+
 // Serving static files in production (non-API routes)
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client', 'build')));

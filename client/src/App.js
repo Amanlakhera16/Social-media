@@ -18,7 +18,9 @@ import { getNotifies } from "./redux/actions/notifyAction";
 
 import AdminDashboard from "./pages/adminDashboard";
 import { GLOBALTYPES } from "./redux/actions/globalTypes";
+import { BASE_URL } from "./utils/config";
 import SocketClient from "./SocketClient";
+
 
 function App() {
   const { auth, status, modal, userType } = useSelector((state) => state);
@@ -27,10 +29,11 @@ function App() {
   useEffect(() => {
     dispatch(refreshToken());
 
-    const socket = io();
+    const socket = io(BASE_URL);
     dispatch({type: GLOBALTYPES.SOCKET, payload: socket })
     return () => socket.close()
   }, [dispatch]);
+
 
 
   useEffect(() => {

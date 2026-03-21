@@ -125,7 +125,7 @@ const SocketClient = () => {
 
     });
     return () => socket.off("addMessageToClient");
-  }, []);
+  }, [socket, dispatch]);
 
   return (
     <>

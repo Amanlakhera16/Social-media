@@ -53,7 +53,7 @@ const StatusModal = () => {
           const track = mediaStream.getTracks();
           setTracks(track[0]);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {});
     }
   };
 
@@ -108,8 +108,6 @@ const StatusModal = () => {
       setImages(status.images);
     }
   }, [status]);
-
-  
 
   return (
     <div className="status_modal">

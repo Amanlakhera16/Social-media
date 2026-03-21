@@ -1,9 +1,10 @@
 const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 
 const authCtrl = {
-  register: async (req, res) => {
+  register: async (req, res, next) => {
     try {
       const { fullname, username, email, password, gender } = req.body;
 
@@ -57,13 +58,13 @@ const authCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  changePassword: async (req, res) => {
+  changePassword: async (req, res, next) => {
     try {
-      const {oldPassword, newPassword} = req.body;
+      const { oldPassword, newPassword } = req.body;
 
       const user = await Users.findOne({ _id: req.user._id });
 
@@ -79,17 +80,19 @@ const authCtrl = {
       }
 
       const newPasswordHash = await bcrypt.hash(newPassword, 12);
-      
-      await Users.findOneAndUpdate({_id: req.user._id}, {password: newPasswordHash });
 
-      res.json({msg: "Password updated successfully."})
+      await Users.findOneAndUpdate(
+        { _id: req.user._id },
+        { password: newPasswordHash }
+      );
 
+      res.json({ msg: "Password updated successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  registerAdmin: async (req, res) => {
+  registerAdmin: async (req, res, next) => {
     try {
       const { fullname, username, email, password, gender, role } = req.body;
 
@@ -121,21 +124,18 @@ const authCtrl = {
         email,
         password: passwordHash,
         gender,
-        role
+        role,
       });
-
-
-
 
       await newUser.save();
 
       res.json({ msg: "Admin Registered Successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  login: async (req, res) => {
+  login: async (req, res, next) => {
     try {
       const { email, password } = req.body;
 
@@ -159,7 +159,7 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        sameSite: 'lax',
+        sameSite: "lax",
         maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
       });
 
@@ -172,11 +172,11 @@ const authCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  adminLogin: async (req, res) => {
+  adminLogin: async (req, res, next) => {
     try {
       const { email, password } = req.body;
 
@@ -209,20 +209,20 @@ const authCtrl = {
         },
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  logout: async (req, res) => {
+  logout: async (req, res, next) => {
     try {
       res.clearCookie("refreshtoken", { path: "/api/refresh_token" });
       return res.json({ msg: "Logged out Successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  generateAccessToken: async (req, res) => {
+  generateAccessToken: async (req, res, next) => {
     try {
       const rf_token = req.cookies.refreshtoken;
 
@@ -231,7 +231,7 @@ const authCtrl = {
       }
       jwt.verify(
         rf_token,
-        process.env.REFRESH_TOKEN_SECRET,
+        config.refresh_token_secret,
         async (err, result) => {
           if (err) {
             return res.status(400).json({ msg: "Please login again." });
@@ -250,19 +250,19 @@ const authCtrl = {
         }
       );
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 };
 
 const createAccessToken = (payload) => {
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+  return jwt.sign(payload, config.access_token_secret, {
     expiresIn: "1d",
   });
 };
 
 const createRefreshToken = (payload) => {
-  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+  return jwt.sign(payload, config.refresh_token_secret, {
     expiresIn: "30d",
   });
 };

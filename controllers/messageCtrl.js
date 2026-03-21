@@ -51,7 +51,7 @@ const messageCtrl = {
 
       res.json({ msg: "Created." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -73,7 +73,7 @@ const messageCtrl = {
         result: conversations.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -97,7 +97,7 @@ const messageCtrl = {
         result: messages.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -106,7 +106,7 @@ const messageCtrl = {
       await Messages.findOneAndDelete({ _id: req.body._id, sender: req.user._id });
       res.json({ msg: "Delete Success!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -122,7 +122,7 @@ const messageCtrl = {
 
       res.json({ msg: "Delete Success!" });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 };

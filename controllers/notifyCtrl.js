@@ -21,7 +21,7 @@ const notifyCtrl = {
       await notify.save();
       return res.json({ notify });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -33,7 +33,7 @@ const notifyCtrl = {
       });
       return res.json({ notify });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -45,7 +45,7 @@ const notifyCtrl = {
 
       return res.json({ notifies });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -60,7 +60,7 @@ const notifyCtrl = {
 
       return res.json({ notifies });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -70,7 +70,7 @@ const notifyCtrl = {
 
       return res.json({ notifies });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 };

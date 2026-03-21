@@ -14,7 +14,7 @@ const userCtrl = {
 
       res.json({ users });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -30,7 +30,7 @@ const userCtrl = {
 
       res.json({ user });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -56,7 +56,7 @@ const userCtrl = {
 
       res.json({ msg: "Profile updated successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -91,7 +91,7 @@ const userCtrl = {
 
       res.json({ newUser });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -115,11 +115,11 @@ const userCtrl = {
 
       res.json({ newUser });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
-  suggestionsUser: async (req, res) => {
+  suggestionsUser: async (req, res, next) => {
     try {
       const newArr = [...req.user.following, req.user._id];
 
@@ -150,12 +150,24 @@ const userCtrl = {
         result: users.length,
       });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
+  updateInterests: async (req, res, next) => {
+    try {
+      const { interests } = req.body;
 
+      await Users.findOneAndUpdate(
+        { _id: req.user._id },
+        { interests }
+      );
 
+      res.json({ msg: "Interests updated successfully." });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 module.exports = userCtrl;

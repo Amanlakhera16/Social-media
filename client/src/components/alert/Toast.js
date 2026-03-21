@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 const STYLES = {
   error: {
@@ -19,6 +19,11 @@ const Toast = ({ msg, handleShow, bgColor }) => {
   const isSuccess = bgColor === "bg-success";
   const style = isSuccess ? STYLES.success : STYLES.error;
 
+  const handleClose = useCallback(() => {
+    setVisible(false);
+    setTimeout(handleShow, 300); // wait for exit animation
+  }, [handleShow]);
+
   // trigger entrance animation on mount
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 10);
@@ -30,12 +35,7 @@ const Toast = ({ msg, handleShow, bgColor }) => {
         clearTimeout(t);
         clearTimeout(autoClose);
     };
-  }, []);
-
-  const handleClose = () => {
-    setVisible(false);
-    setTimeout(handleShow, 300); // wait for exit animation
-  };
+  }, [handleClose]);
 
   return (
     <div

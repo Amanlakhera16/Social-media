@@ -5,10 +5,9 @@ import { GLOBALTYPES } from '../../redux/actions/globalTypes';
 import { addUser, getConversations } from "../../redux/actions/messageAction";
 import { getDataAPI } from '../../utils/fetchData';
 import UserCard from "../UserCard";
-import moment from 'moment';
 
 const LeftSide = () => {
-    const { auth, message, online } = useSelector((state) => state);
+    const { auth, message } = useSelector((state) => state);
     const dispatch = useDispatch();
     const history = useHistory();
     const { id } = useParams();

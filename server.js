@@ -1,7 +1,17 @@
-const path = require('path');
-const envFile =
-  process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
-require('dotenv').config({ path: path.join(__dirname, envFile) });
+// --- GLOBAL SECURITY INTERCEPTOR (Redacts secrets from Node.js warnings) ---
+// Must be at the absolute top before any other imports
+process.removeAllListeners('warning'); 
+process.on('warning', (warning) => {
+  if (warning.message) {
+    // We require the sanitizer here to avoid early require issues
+    const { sanitize } = require('./utils/logger');
+    const sanitizedMsg = sanitize(warning.message);
+    process.stderr.write(`(node:${process.pid}) Warning: ${sanitizedMsg}\n`);
+  }
+});
+
+const logger = require('./utils/logger');
+const config = require('./config/config');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -16,8 +26,8 @@ app.use(express.json())
 app.use(helmet());
 app.use(compression());
 
-const isProd = process.env.NODE_ENV === 'production';
-const allowedOrigins = (process.env.CLIENT_URL || '')
+const isProd = config.env === 'production';
+const allowedOrigins = (config.client_url || '')
   .split(',')
   .map((origin) => origin.trim().replace(/\/+$/, ''))
   .filter(Boolean);
@@ -51,12 +61,9 @@ const io = require('socket.io')(http, {
   cors: corsOptions
 });
 
-
-
 io.on('connection', socket => {
   SocketServer(socket);
 })
-
 //#endregion
 
 //#region // !Routes
@@ -73,9 +80,9 @@ app.get('/', (req, res) => {
   res.json({ msg: "SocioMatrix Server is running!" });
 });
 
-
 // Serving static files in production (non-API routes)
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
+  const path = require('path');
   app.use(express.static(path.join(__dirname, 'client', 'build')));
   app.get('*', (req, res) => {
     if (req.path.startsWith('/api')) return res.status(404).end();
@@ -83,18 +90,28 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-const URI = process.env.MONGODB_URL;
-mongoose.connect(URI, {
+// Global Error Handler
+app.use((err, req, res, next) => {
+  logger.error(err.message, { stack: isProd ? null : err.stack });
+  const status = err.status || 500;
+  const message = isProd ? "An internal server error occurred." : err.message;
+  res.status(status).json({ msg: message });
+});
+
+mongoose.connect(config.mongo_uri, {
   useCreateIndex: true,
   useFindAndModify: false,
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, err => {
-  if (err) throw err;
-  console.log("Database Connected!!")
+  if (err) {
+      logger.error("Database connection failed.");
+      process.exit(1);
+  }
+  logger.info("Database connected successfully.");
 })
 
-const port = process.env.PORT || 8080;
+const port = config.port;
 http.listen(port, () => {
-  console.log("Listening on ", port);
+  logger.info(`Server is listening on port ${port}`);
 });

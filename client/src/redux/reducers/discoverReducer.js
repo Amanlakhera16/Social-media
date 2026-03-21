@@ -27,7 +27,7 @@ const discoverReducer = (state = initialState, action) => {
     case DISCOVER_TYPES.UPDATE_POSTS:
       return {
         ...state,
-        posts: [...action.payload.posts],
+        posts: [...state.posts, ...action.payload.posts],
         result: action.payload.result,
         page: state.page + 1,
       };

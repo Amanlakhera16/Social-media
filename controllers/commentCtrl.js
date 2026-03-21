@@ -36,7 +36,7 @@ const commentCtrl = {
       await newComment.save();
       res.json({ newComment });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -51,7 +51,7 @@ const commentCtrl = {
 
       res.json({ msg: "updated successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -79,7 +79,7 @@ const commentCtrl = {
 
       res.json({ msg: "Comment liked successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -97,7 +97,7 @@ const commentCtrl = {
 
       res.json({ msg: "Comment unliked successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -117,7 +117,7 @@ const commentCtrl = {
       res.json({msg: "Comment deleted successfully."});
       
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 };

@@ -1,7 +1,7 @@
 const Posts = require("../models/postModel");
 const Users = require("../models/userModel");
 const Comments = require("../models/commentModel");
-const { post } = require("../routes/adminRouter");
+
 
 
 const adminCtrl = {
@@ -11,7 +11,7 @@ const adminCtrl = {
       const total_users = users.length;
       res.json({ total_users });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -21,7 +21,7 @@ const adminCtrl = {
       const total_posts = posts.length;
       res.json({ total_posts });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -31,7 +31,7 @@ const adminCtrl = {
       const total_comments = comments.length;
       res.json({ total_comments });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -42,7 +42,7 @@ const adminCtrl = {
       await posts.map((post) => (total_likes += post.likes.length));
       res.json({ total_likes });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -54,7 +54,7 @@ const adminCtrl = {
       const total_spam_posts = reportedPosts.length;
       res.json({ total_spam_posts });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -67,7 +67,7 @@ const adminCtrl = {
       
       res.json({ spamPosts });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 
@@ -81,7 +81,7 @@ const adminCtrl = {
 
       res.json({ msg: "Post deleted successfully." });
     } catch (err) {
-      return res.status(500).json({ msg: err.message });
+      next(err);
     }
   },
 };

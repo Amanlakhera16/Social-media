@@ -91,9 +91,26 @@
 .chat_text {
     padding: 8px 12px;
     border-radius: 20px;
-    max-width: 70%;
+    max-width: 100%;
     font-size: 14px;
     line-height: 1.4;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.msg_display_container {
+    width: fit-content;
+    max-width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.you_message .msg_display_container {
+    align-items: flex-end;
+}
+
+.other_message .msg_display_container {
+    align-items: flex-start;
 }
 
 .you_message .chat_text {
@@ -109,20 +126,20 @@
     border-bottom-left-radius: 4px;
 }
 
+
 .chat_time {
     font-size: 10px;
     color: #8e8e8e;
     margin-top: 4px;
+    width: 100%;
 }
 
 .you_message .chat_time {
     text-align: right;
-    margin-right: 5px;
 }
 
 .other_message .chat_time {
     text-align: left;
-    margin-left: 5px;
 }
 
 .chat_input {

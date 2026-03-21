@@ -74,6 +74,10 @@ const userSchema = new Schema(
         ref: "user",
       },
     ],
+    interests: {
+      type: Array,
+      default: [],
+    },
   },
   {
     timestamps: true,

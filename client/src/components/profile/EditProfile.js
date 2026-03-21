@@ -38,21 +38,22 @@ const EditProfile = ({ setOnEdit }) => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const handleSubmit = e => {
-      e.preventDefault();
-      dispatch(updateProfileUser( {userData, avatar, auth} ) );
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateProfileUser({ userData, avatar, auth }));
+    setOnEdit(false);
   };
 
   return (
     <div className="edit_profile">
-      <button
-        className="btn btn-danger btn_close"
-        onClick={() => setOnEdit(false)}
-      >
-        Close
-      </button>
-
       <form onSubmit={handleSubmit}>
+        <button
+          type="button"
+          className="btn btn-danger btn_close"
+          onClick={() => setOnEdit(false)}
+        >
+          Close
+        </button>
         <div className="info_avatar">
           <img
             alt="profile"

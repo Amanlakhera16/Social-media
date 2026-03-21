@@ -80,6 +80,7 @@
     padding: 20px;
     border-radius: 5px;
     margin: 20px auto;
+    position: relative;
 }
 
 .edit_profile form input{
@@ -95,8 +96,8 @@
 
 .edit_profile .btn_close{
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 10px;
+    right: 10px;
 }
 
 .edit_profile .info_avatar{
@@ -219,7 +220,3 @@
 }
 
 /* #endregion */
-
-
-
-

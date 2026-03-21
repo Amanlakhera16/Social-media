@@ -117,6 +117,16 @@ const SocketServer = (socket) => {
     const user = users.find(user => user.id === msg.recipient);
     user && socket.to(`${user.socketId}`).emit("addMessageToClient", msg);
   });
+  
+  socket.on("typing", (msg) => {
+    const user = users.find(user => user.id === msg.recipient);
+    user && socket.to(`${user.socketId}`).emit("typingToClient", msg);
+  });
+
+  socket.on("doneTyping", (msg) => {
+    const user = users.find(user => user.id === msg.recipient);
+    user && socket.to(`${user.socketId}`).emit("doneTypingToClient", msg);
+  });
 
   //#endregion
 }

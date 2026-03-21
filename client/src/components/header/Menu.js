@@ -79,9 +79,10 @@ const Menu = () => {
                 style={{ color: "white" }}
                 htmlFor="theme"
                 className="dropdown-item"
-                onClick={() =>
-                  dispatch({ type: GLOBALTYPES.THEME, payload: !theme })
-                }
+                onClick={() => {
+                  dispatch({ type: GLOBALTYPES.THEME, payload: !theme });
+                  localStorage.setItem("theme", !theme);
+                }}
               >
                 {theme ? "Light mode" : "Dark mode"}
               </label>

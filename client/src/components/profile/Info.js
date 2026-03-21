@@ -1,4 +1,5 @@
 import React, { useState, useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 import Avatar from '../Avatar';
 import EditProfile from './EditProfile';
 import FollowBtn from '../FollowBtn';
@@ -14,6 +15,7 @@ const Info = ({id, auth, profile, dispatch}) => {
 
     const [showFollowers, setShowFollowers] = useState(false);
     const [showFollowing, setShowFollowing] = useState(false);
+    const history = useHistory();
     const currentUserId = auth?.user?._id;
 
     useEffect(() => {
@@ -52,24 +54,29 @@ const Info = ({id, auth, profile, dispatch}) => {
               <div className="info_content_title">
                 <h2>{user.username}</h2>
                 {user._id === currentUserId ? (
+                  <>
                   <button
                     className="btn-1 outer-shadow hover-in-shadow"
                     onClick={() => setOnEdit(true)}
                   >
                     Edit Profile
                   </button>
-                ) : (
-                  <FollowBtn user={user} />
-                )}
-                {user._id === currentUserId ? (
                   <button
-                    className="btn-1 outer-shadow hover-in-shadow"
+                    className="btn-1 outer-shadow hover-in-shadow ml-3"
                     onClick={() => setChangePassword(true)}
                   >
                     change password
                   </button>
+                  </>
                 ) : (
+                  <>
                   <FollowBtn user={user} />
+                  <button className="btn-1 outer-shadow hover-in-shadow ml-3"
+                  style={{borderRadius: '5px'}}
+                  onClick={() => history.push(`/message/${user._id}`)}>
+                      Message
+                  </button>
+                  </>
                 )}
               </div>
 
@@ -120,4 +127,4 @@ const Info = ({id, auth, profile, dispatch}) => {
     );
 }
 
-export default Info
+export default Info;

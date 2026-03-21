@@ -22,7 +22,14 @@ const Toast = ({ msg, handleShow, bgColor }) => {
   // trigger entrance animation on mount
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 10);
-    return () => clearTimeout(t);
+    const autoClose = setTimeout(() => {
+        handleClose();
+    }, 3000);
+
+    return () => {
+        clearTimeout(t);
+        clearTimeout(autoClose);
+    };
   }, []);
 
   const handleClose = () => {
@@ -50,6 +57,16 @@ const Toast = ({ msg, handleShow, bgColor }) => {
         transition: "transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease",
       }}
     >
+        {/* Style for animation */}
+        <style>
+          {`
+            @keyframes toastProgress {
+              from { width: 100%; }
+              to { width: 0%; }
+            }
+          `}
+        </style>
+
       {/* Header */}
       <div
         style={{
@@ -141,11 +158,13 @@ const Toast = ({ msg, handleShow, bgColor }) => {
         {msg.body}
       </div>
 
-      {/* Bottom progress bar (decorative) */}
+      {/* Bottom progress bar */}
       <div
         style={{
-          height: "3px",
-          background: "rgba(255,255,255,0.35)",
+          height: "4px",
+          background: "rgba(255,255,255,0.4)",
+          width: "100%",
+          animation: visible ? "toastProgress 3s linear forwards" : "none",
           borderRadius: "0 0 16px 16px",
         }}
       />

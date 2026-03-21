@@ -5,9 +5,10 @@ import { GLOBALTYPES } from '../../redux/actions/globalTypes';
 import { addUser, getConversations } from "../../redux/actions/messageAction";
 import { getDataAPI } from '../../utils/fetchData';
 import UserCard from "../UserCard";
+import moment from 'moment';
 
 const LeftSide = () => {
-    const { auth, message } = useSelector((state) => state);
+    const { auth, message, online } = useSelector((state) => state);
     const dispatch = useDispatch();
     const history = useHistory();
     const { id } = useParams();
@@ -17,19 +18,19 @@ const LeftSide = () => {
     const [search, setSearch] = useState('');
     const [searchUsers, setSearchUsers] = useState([]);
 
-    const handleSearch = async e => {
+    const handleSearch = async (e) => {
         e.preventDefault();
         if (!search) return setSearchUsers([]);
 
-    try {
-      const res = await getDataAPI(`search?username=${search}`, auth.token);
-      setSearchUsers(res.data.users);
-    } catch (err) {
-      dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { error: err.response.data.msg },
-      });
-    }
+        try {
+            const res = await getDataAPI(`search?username=${search}`, auth.token);
+            setSearchUsers(res.data.users);
+        } catch (err) {
+            dispatch({
+                type: GLOBALTYPES.ALERT,
+                payload: { error: err.response.data.msg },
+            });
+        }
     };
 
     const handleAddUser = (user) => {
@@ -40,83 +41,90 @@ const LeftSide = () => {
     };
 
     const isActive = (user) => {
-      if(id === user._id) return 'active';
-      return '';
+        if(id === user._id) return 'active';
+        return '';
     }
 
     useEffect(() => {
-      if (message.firstLoad) return;
-      dispatch(getConversations({ auth }));
+        if (message.firstLoad) return;
+        dispatch(getConversations({ auth }));
     }, [dispatch, auth, message.firstLoad]);
 
-     useEffect(() => {
-       const observer = new IntersectionObserver(
-         (entries) => {
-           if (entries[0].isIntersecting) {
-             setPage((p) => p + 1);
-           }
-         },
-         {
-           threshold: 0.1,
-         }
-       );
-       observer.observe(pageEnd.current);
-     }, [setPage]);
+    // load more
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    setPage((p) => p + 1);
+                }
+            },
+            {
+                threshold: 0.1,
+            }
+        );
+        observer.observe(pageEnd.current);
+    }, [setPage]);
 
-     useEffect(() => {
-       if (message.resultUsers >= (page - 1) * 9 && page > 1) {
-         dispatch(getConversations({ auth, page }));
-       }
-     }, [message.resultUsers, page, auth, dispatch]);
+    useEffect(() => {
+        if (message.resultUsers >= (page - 1) * 9 && page > 1) {
+            dispatch(getConversations({ auth, page }));
+        }
+    }, [message.resultUsers, page, auth, dispatch]);
 
     return (
-      <>
-        <form className="message_header" onSubmit={handleSearch}>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="search..."
-          />
+        <>
+            <form className="message_header" onSubmit={handleSearch}>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search..."
+                />
 
-          <button style={{ display: "none" }} type="submit" id="search">
-            Search
-          </button>
-        </form>
+                <button style={{ display: "none" }} type="submit" id="search">
+                    Search
+                </button>
+            </form>
 
-        <div className="message_chat_list">
-          {searchUsers.length !== 0 ? (
-            <>
-              {searchUsers.map((user) => (
-                <div
-                  key={user._id}
-                  className={`message_user ${isActive(user)}`}
-                  onClick={() => handleAddUser(user)}
-                >
-                  <UserCard user={user} />
-                </div>
-              ))}
-            </>
-          ) : (
-            <>
-              {message.users.map((user) => (
-                <div
-                  key={user._id}
-                  cclassName={`message_user ${isActive(user)}`}
-                  onClick={() => handleAddUser(user)}
-                >
-                  <UserCard user={user} msg={true}>
-                    <i className="fas fa-circle" />
-                  </UserCard>
-                </div>
-              ))}
-            </>
-          )}
+            <div className="message_chat_list">
+                {searchUsers.length !== 0 ? (
+                    <>
+                        {searchUsers.map((user) => (
+                            <div
+                                key={user._id}
+                                className={`message_user ${isActive(user)}`}
+                                onClick={() => handleAddUser(user)}
+                            >
+                                <UserCard user={user} />
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        {message.users.map((user) => (
+                            <div
+                                key={user._id}
+                                className={`message_user ${isActive(user)}`}
+                                onClick={() => handleAddUser(user)}
+                            >
+                                <UserCard user={user} msg={true}>
+                                    {
+                                        user.online 
+                                        ? <i className="fas fa-circle text-success" />
+                                        : auth.user.following.find(item => item._id === user._id)
+                                            ? <i className="fas fa-circle" />
+                                            : <i className="fas fa-circle" />
+                                    }
+                                </UserCard>
+                            </div>
+                        ))}
+                    </>
+                )}
 
-          <button style={{opacity: 0}} ref={pageEnd}>Load more..</button>
-        </div>
-      </>
+                <button style={{opacity: 0}} ref={pageEnd}>Load more..</button>
+            </div>
+        </>
     );
-}
+};
 
-export default LeftSide
+export default LeftSide;

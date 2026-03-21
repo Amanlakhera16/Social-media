@@ -11,10 +11,13 @@ const initialState = {
 const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case MESSAGE_TYPES.ADD_USER:
-      return {
-        ...state,
-        users: [...state.data, action.payload],
-      };
+      if(state.users.every(item => item._id !== action.payload._id)){
+        return {
+          ...state,
+          users: [action.payload, ...state.users],
+        };
+      }
+      return state;
 
     case MESSAGE_TYPES.ADD_MESSAGE:
       return {
@@ -43,9 +46,22 @@ const messageReducer = (state = initialState, action) => {
     case MESSAGE_TYPES.GET_MESSAGES:
       return {
         ...state,
-        data: action.payload.messages.reverse(),
+        data: action.payload.messages,
         resultData: action.payload.result,
       };
+
+    case MESSAGE_TYPES.DELETE_MESSAGES:
+        return {
+            ...state,
+            data: action.payload.newData
+        };
+
+    case MESSAGE_TYPES.DELETE_CONVERSATION:
+        return {
+            ...state,
+            users: state.users.filter(item => item._id !== action.payload),
+            data: []
+        };
 
     default:
       return state;

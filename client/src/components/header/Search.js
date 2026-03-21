@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDataAPI } from "../../utils/fetchData";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes";
@@ -14,23 +14,26 @@ const Search = () => {
   const dispatch = useDispatch();
   const [load, setLoad] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-
-    if (!search) return;
-
-    try {
-      setLoad(true);
-      const res = await getDataAPI(`search?username=${search}`, auth.token);
-      setUsers(res.data.users);
-      setLoad(false);
-    } catch (err) {
-      dispatch({
-        type: GLOBALTYPES.ALERT,
-        payload: { error: err.response.data.msg },
-      });
+  useEffect(() => {
+    if (search) {
+      const getSearch = setTimeout(async () => {
+        try {
+          setLoad(true);
+          const res = await getDataAPI(`search?username=${search}`, auth.token);
+          setUsers(res.data.users);
+          setLoad(false);
+        } catch (err) {
+          dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: { error: err.response.data.msg },
+          });
+        }
+      }, 300);
+      return () => clearTimeout(getSearch);
+    } else {
+      setUsers([]);
     }
-  };
+  }, [search, auth.token, dispatch]);
 
   const handleClose = () => {
     setSearch("");
@@ -38,7 +41,7 @@ const Search = () => {
   };
 
   return (
-    <form className="search_form" onSubmit={handleSearch}>
+    <form className="search_form" onSubmit={e => e.preventDefault()}>
       <input
         type="text"
         title="Enter to Search"

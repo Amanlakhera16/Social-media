@@ -36,7 +36,7 @@ const messageCtrl = {
           text,
           media,
         },
-        { new: true, upsert: true }
+        { new: true, upsert: true, setDefaultsOnInsert: true }
       );
 
       const newMessage = new Messages({
@@ -96,6 +96,31 @@ const messageCtrl = {
         messages,
         result: messages.length,
       });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  deleteMessages: async (req, res) => {
+    try {
+      await Messages.findOneAndDelete({ _id: req.body._id, sender: req.user._id });
+      res.json({ msg: "Delete Success!" });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  deleteConversation: async (req, res) => {
+    try {
+      const newConver = await Conversations.findOneAndDelete({
+        $or: [
+          { recipients: [req.user._id, req.body.id] },
+          { recipients: [req.body.id, req.user._id] },
+        ],
+      });
+      await Messages.deleteMany({ conversation: newConver._id });
+
+      res.json({ msg: "Delete Success!" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

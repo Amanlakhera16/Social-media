@@ -23,7 +23,7 @@ import SocketClient from "./SocketClient";
 
 
 function App() {
-  const { auth, status, modal, userType } = useSelector((state) => state);
+  const { auth, status, modal, userType, theme } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function App() {
   return (
     <Router>
       <Alert />
-      <input type="checkbox" id="theme" />
+      <input type="checkbox" id="theme" checked={theme} readOnly />
       <div className={`App ${(status || modal) && "mode"}`}>
         <div className="main">
           {userType === "user" && auth.token && <Header />}

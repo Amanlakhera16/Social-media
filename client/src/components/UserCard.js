@@ -40,8 +40,9 @@ const UserCard = ({
             <small className="d-flex text-muted" style={{ flexWrap: "wrap" }}>
               {msg ? (
                 <>
+                  <div className="text-muted">{user.fullname}</div>
                   <div>{user.text}</div>
-                  {user.media.length > 0 && <div>{user.media.length} <i className="fas fa-image" /></div>}
+                  {user.media && user.media.length > 0 && <div>{user.media.length} <i className="fas fa-image" /></div>}
                 </>
               ) : (
                 user.fullname

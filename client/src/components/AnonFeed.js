@@ -4,6 +4,7 @@ import axios from "axios";
 import LoadIcon from "../images/loading.gif";
 import { imageShow, videoShow } from "../utils/mediaShow";
 import AnonPostModal from "./AnonPostModal";
+import { BASE_URL } from "../utils/config";
 
 const AnonFeed = () => {
   const { auth, theme } = useSelector((state) => state);
@@ -20,7 +21,7 @@ const AnonFeed = () => {
     setLoading(true);
 
     try {
-      const res = await axios.get(`/api/anon_posts?page=${pageNum}&limit=10`, {
+      const res = await axios.get(`${BASE_URL}/api/anon_posts?page=${pageNum}&limit=10`, {
         headers: { Authorization: auth.token },
       });
       const newPosts = res.data.posts || [];

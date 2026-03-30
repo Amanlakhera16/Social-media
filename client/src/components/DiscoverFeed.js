@@ -4,6 +4,7 @@ import axios from "axios";
 import LoadIcon from "../images/loading.gif";
 import { imageShow, videoShow } from "../utils/mediaShow";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "../utils/config";
 
 // --- CURATED CONSTANTS ---
 const SAD_QUOTES = [
@@ -72,7 +73,7 @@ const DiscoverFeed = () => {
                 (!myInterests.length || myInterests.includes('MOTIVATIONAL')) ? externalApi.get("https://dummyjson.com/quotes/random").catch(() => null) : Promise.resolve(null),
                 (!myInterests.length || myInterests.includes('MEME')) ? externalApi.get("https://meme-api.com/gimme").catch(() => null) : Promise.resolve(null),
                 (!myInterests.length || myInterests.includes('NEWS') || myInterests.includes('SPORTS')) ? externalApi.get(`https://api.spaceflightnewsapi.net/v4/articles?limit=${newsLimit}`).catch(() => null) : Promise.resolve(null),
-                axios.get(`/api/post_discover?limit=${userLimit}&page=${pageNum}`, {
+                axios.get(`${BASE_URL}/api/post_discover?limit=${userLimit}&page=${pageNum}`, {
                     headers: { Authorization: auth.token }
                 }).catch(() => null)
             ];

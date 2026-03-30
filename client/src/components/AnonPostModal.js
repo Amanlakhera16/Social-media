@@ -6,6 +6,7 @@ import { imageUpload } from "../utils/imageUpload";
 import { imageShow, videoShow } from "../utils/mediaShow";
 import { patchDataAPI } from "../utils/fetchData";
 import axios from "axios";
+import { BASE_URL } from "../utils/config";
 
 const AnonPostModal = ({ onClose }) => {
   const { auth, theme } = useSelector((state) => state);
@@ -45,7 +46,7 @@ const AnonPostModal = ({ onClose }) => {
       let media = [];
       if (images.length > 0) media = await imageUpload(images);
 
-      await axios.post("/api/anon_posts", { content, images: media }, {
+      await axios.post(`${BASE_URL}/api/anon_posts`, { content, images: media }, {
         headers: { Authorization: auth.token }
       });
 

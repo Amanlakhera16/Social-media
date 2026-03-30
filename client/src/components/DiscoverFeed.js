@@ -43,6 +43,8 @@ const CONTENT_TYPES = {
   ANON: { label: "Anonymous", emoji: "👻", color: "#2c2c3e" }
 };
 
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
 // --- AXIOS INSTANCE FOR EXTERNAL APIS (Fixes CORS with global credentials) ---
 const externalApi = axios.create({
     withCredentials: false
@@ -57,22 +59,23 @@ const DiscoverFeed = () => {
     const isFetching = useRef(false);
 
     const fetchBatch = useCallback(async (pageNum) => {
-        console.log("Fetching batch for page:", pageNum);
         if (isFetching.current) return;
         isFetching.current = true;
         setLoading(true);
 
         const myInterests = auth.user.interests || [];
+        const interestSet = new Set(myInterests);
 
         try {
-            // Adjust limits based on page: Page 1 is smaller (~10-12), Page > 1 is ~20
-            const userLimit = pageNum === 1 ? 5 : 10;
-            const newsLimit = pageNum === 1 ? 3 : 6;
+            // Target batch sizes
+            const targetTotal = pageNum === 1 ? 10 : 15;
+            const userLimit = pageNum === 1 ? 6 : 10;
+            const newsLimit = pageNum === 1 ? 6 : 8;
 
             const systemPromises = [
-                (!myInterests.length || myInterests.includes('MOTIVATIONAL')) ? externalApi.get("https://dummyjson.com/quotes/random").catch(() => null) : Promise.resolve(null),
-                (!myInterests.length || myInterests.includes('MEME')) ? externalApi.get("https://meme-api.com/gimme").catch(() => null) : Promise.resolve(null),
-                (!myInterests.length || myInterests.includes('NEWS') || myInterests.includes('SPORTS')) ? externalApi.get(`https://api.spaceflightnewsapi.net/v4/articles?limit=${newsLimit}`).catch(() => null) : Promise.resolve(null),
+                externalApi.get("https://dummyjson.com/quotes/random").catch(() => null),
+                externalApi.get("https://meme-api.com/gimme").catch(() => null),
+                externalApi.get(`https://api.spaceflightnewsapi.net/v4/articles?limit=${newsLimit}`).catch(() => null),
                 axios.get(`${BASE_URL}/api/post_discover?limit=${userLimit}&page=${pageNum}`, {
                     headers: { Authorization: auth.token }
                 }).catch(() => null)
@@ -80,52 +83,77 @@ const DiscoverFeed = () => {
 
             const [quoteRes, memeRes, newsRes, userRes] = await Promise.all(systemPromises);
 
-            const batch = [];
-            if (memeRes?.data) batch.push({ ...memeRes.data, type: 'MEME' });
-            if (quoteRes?.data) batch.push({ ...quoteRes.data, type: 'MOTIVATIONAL' });
+            const systemItems = [];
+            if (memeRes?.data) systemItems.push({ ...memeRes.data, type: 'MEME' });
+            if (quoteRes?.data) systemItems.push({ ...quoteRes.data, type: 'MOTIVATIONAL' });
             if (newsRes?.data?.results) {
                 newsRes.data.results.forEach((n, i) => {
                     const type = i % 2 === 0 ? 'NEWS' : 'SPORTS';
-                    if(!myInterests.length || myInterests.includes(type)) {
-                        batch.push({ ...n, type });
-                    }
+                    systemItems.push({ ...n, type });
                 });
-            } else if (pageNum === 1 && (!myInterests.length || myInterests.includes('SPORTS'))) {
-                batch.push({ ...SPORTS_NEWS[Math.floor(Math.random() * SPORTS_NEWS.length)], type: 'SPORTS' });
+            } else if (pageNum === 1) {
+                systemItems.push({ ...SPORTS_NEWS[Math.floor(Math.random() * SPORTS_NEWS.length)], type: 'SPORTS' });
             }
 
-            // More fallbacks for larger batches
             if (pageNum > 1) {
-                if(!myInterests.length || myInterests.includes('SAD')) {
-                    batch.push({ ...SAD_QUOTES[Math.floor(Math.random() * SAD_QUOTES.length)], type: 'SAD' });
-                }
-                if(!myInterests.length || myInterests.includes('POEM')) {
-                    batch.push({ ...BREAKUP_POEMS[Math.floor(Math.random() * BREAKUP_POEMS.length)], type: 'POEM' });
-                }
-            }
-            
-            if(!myInterests.length || myInterests.includes('JOBS')) {
-                batch.push({ ...JOB_VACANCIES[Math.floor(Math.random() * JOB_VACANCIES.length)], type: 'JOBS' });
+                systemItems.push({ ...SAD_QUOTES[Math.floor(Math.random() * SAD_QUOTES.length)], type: 'SAD' });
+                systemItems.push({ ...BREAKUP_POEMS[Math.floor(Math.random() * BREAKUP_POEMS.length)], type: 'POEM' });
             }
 
-            const userPosts = userRes?.data?.posts || [];
+            systemItems.push({ ...JOB_VACANCIES[Math.floor(Math.random() * JOB_VACANCIES.length)], type: 'JOBS' });
+
+            const isPreferredType = (type) => !myInterests.length || interestSet.has(type);
+            const preferredSystem = [];
+            const otherSystem = [];
+            systemItems.forEach((item) => {
+                if (isPreferredType(item.type)) preferredSystem.push(item);
+                else otherSystem.push(item);
+            });
+
+            const userPosts = (userRes?.data?.posts || []).map((p) => ({ ...p, type: 'USER' }));
+            const preferPool = shuffle([...userPosts, ...preferredSystem]);
+            const otherPool = shuffle(otherSystem);
+
+            const preferTarget = myInterests.length ? Math.max(1, Math.round(targetTotal * 0.7)) : targetTotal;
             const mixedBatch = [];
-            const shuffledSystem = batch.sort(() => Math.random() - 0.5);
 
-            let sIdx = 0, uIdx = 0;
-            while(sIdx < shuffledSystem.length || uIdx < userPosts.length) {
-                if(sIdx < shuffledSystem.length) {
-                    mixedBatch.push({ ...shuffledSystem[sIdx], id: `sys-${Date.now()}-${sIdx}-${pageNum}` });
-                    sIdx++;
-                }
-                if(uIdx < userPosts.length && (mixedBatch.length % 2 === 0)) {
-                    mixedBatch.push({ ...userPosts[uIdx], type: 'USER' });
-                    uIdx++;
+            while (mixedBatch.length < targetTotal && (preferPool.length || otherPool.length)) {
+                if (preferPool.length && (mixedBatch.length < preferTarget || !otherPool.length)) {
+                    mixedBatch.push(preferPool.shift());
+                } else if (otherPool.length) {
+                    mixedBatch.push(otherPool.shift());
                 }
             }
 
-            setPosts(prev => pageNum === 1 ? mixedBatch : [...prev, ...mixedBatch]);
-            if (mixedBatch.length === 0) hasMore.current = false;
+            const fallbackPools = [
+                { type: 'SPORTS', items: SPORTS_NEWS },
+                { type: 'JOBS', items: JOB_VACANCIES },
+                { type: 'SAD', items: SAD_QUOTES },
+                { type: 'POEM', items: BREAKUP_POEMS }
+            ];
+            const getFallback = (preferOnly) => {
+                let pools = fallbackPools;
+                if (preferOnly && myInterests.length) {
+                    pools = fallbackPools.filter(p => interestSet.has(p.type));
+                }
+                if (!pools.length) pools = fallbackPools;
+                const pool = pools[Math.floor(Math.random() * pools.length)];
+                const item = pool.items[Math.floor(Math.random() * pool.items.length)];
+                return { ...item, type: pool.type };
+            };
+
+            while (mixedBatch.length < targetTotal) {
+                const preferOnly = myInterests.length && mixedBatch.length < preferTarget;
+                mixedBatch.push(getFallback(preferOnly));
+            }
+
+            const finalized = mixedBatch.map((item, i) => {
+                if (item._id || item.id) return item;
+                return { ...item, id: `sys-${Date.now()}-${i}-${pageNum}` };
+            });
+
+            setPosts(prev => pageNum === 1 ? finalized : [...prev, ...finalized]);
+            if (finalized.length === 0) hasMore.current = false;
 
         } catch (err) {
             console.error(err);

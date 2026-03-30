@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import { GLOBALTYPES } from '../redux/actions/globalTypes';
+import { BASE_URL } from '../utils/config';
 
 const CATEGORIES = [
     { label: "Memes", emoji: "😂", tag: "MEME" },
@@ -38,7 +39,7 @@ const AddMore = () => {
         setSelected(newSelected);
 
         try {
-            await axios.patch('/api/update_interests', { interests: newSelected }, {
+            await axios.patch(`${BASE_URL}/api/update_interests`, { interests: newSelected }, {
                 headers: { Authorization: auth.token }
             });
             

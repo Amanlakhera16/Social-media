@@ -45,7 +45,7 @@ const AnonPostModal = ({ onClose }) => {
       let media = [];
       if (images.length > 0) media = await imageUpload(images);
 
-      await axios.post("/api/anon_post", { content, images: media }, {
+      await axios.post("/api/anon_posts", { content, images: media }, {
         headers: { Authorization: auth.token }
       });
 

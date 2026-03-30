@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './styles/global.css';
+import './styles/anonymous.css';
+import './styles/ai_avatar.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

@@ -45,6 +45,50 @@ const postCtrl = {
     }
   },
 
+  createAnonymousPost: async (req, res, next) => {
+    try {
+      const { content, images } = req.body;
+
+      if (!content?.trim() && (!images || images.length === 0)) {
+        return res.status(400).json({ msg: "Please add text or photo(s)." });
+      }
+
+      const newPost = new Posts({
+        content,
+        images,
+        user: null,
+        isAnonymous: true,
+      });
+      await newPost.save();
+
+      res.json({
+        msg: "Anonymous post created successfully.",
+        newPost: newPost._doc,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  getAnonymousPosts: async (req, res, next) => {
+    try {
+      const features = new APIfeatures(
+        Posts.find({ isAnonymous: true }),
+        req.query
+      ).paginating();
+
+      const posts = await features.query.sort("-createdAt");
+
+      res.json({
+        msg: "Success",
+        result: posts.length,
+        posts,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   getPosts: async (req, res, next) => {
     try {
       const features = new APIfeatures(
@@ -204,7 +248,12 @@ const postCtrl = {
     try {
       const newArr = [...req.user.following, req.user._id];
 
-      const query = { user: { $nin: newArr } };
+      const query = {
+        $or: [
+          { user: { $nin: newArr }, isAnonymous: false },
+          { isAnonymous: true }
+        ]
+      };
 
       if (req.user.interests && req.user.interests.length > 0) {
         query.category = { $in: req.user.interests };

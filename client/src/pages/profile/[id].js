@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from "react-redux";
 import LoadIcon  from "../../images/loading.gif";
 import { getProfileUsers } from "../../redux/actions/profileAction";
 import Saved from '../../components/profile/Saved';
+import AvatarCreator from '../../components/AvatarCreator';
+import "../../styles/ai_avatar.css";
 
 const Profile = () => {
   const { profile, auth } = useSelector(state => state);
@@ -13,6 +15,7 @@ const Profile = () => {
 
   const { id } = useParams();
   const [saveTab, setSaveTab] = useState(false);
+  const [showAvatarCreator, setShowAvatarCreator] = useState(false);
   const currentUserId = auth?.user?._id;
 
   useEffect(() => {
@@ -29,6 +32,25 @@ const Profile = () => {
     return (
       <div className="profile">
         <Info auth={auth} profile={profile} dispatch={dispatch} id={id} />
+
+        {currentUserId === id && !auth.user.hasCustomAvatar && (
+          <div className="avatar_prompt_banner">
+            <div className="avatar_prompt_text">
+              ✨ You don't have a custom avatar yet! Create one now.
+            </div>
+            <button className="avatar_prompt_btn" onClick={() => setShowAvatarCreator(true)}>
+              🎨 Create Avatar
+            </button>
+          </div>
+        )}
+
+        {currentUserId === id && auth.user.hasCustomAvatar && (
+          <div className="text-center mb-3">
+             <button className="btn btn-outline-info btn-sm" onClick={() => setShowAvatarCreator(true)}>
+               ⚙️ Edit Custom Avatar
+             </button>
+          </div>
+        )}
 
         {currentUserId === id && (
           <div className="profile_tab">
@@ -57,6 +79,10 @@ const Profile = () => {
               : <Posts auth={auth} profile={profile} dispatch={dispatch} id={id} />
             }
           </>
+        )}
+
+        {showAvatarCreator && (
+          <AvatarCreator onClose={() => setShowAvatarCreator(false)} />
         )}
       </div>
     );

@@ -1,0 +1,355 @@
+/* ===== AI TOOLBAR ===== */
+.ai_toolbar {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 6px;
+  flex-wrap: wrap;
+  animation: fadeSlideIn 0.25s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai_btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.2px;
+}
+
+.ai_btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.ai_btn_enhance {
+  background: linear-gradient(135deg, #f7971e, #ffd200);
+  color: #1a1a1a;
+  box-shadow: 0 3px 12px rgba(247,151,30,0.3);
+}
+
+.ai_btn_enhance:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(247,151,30,0.45);
+}
+
+.ai_btn_generate {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(102,126,234,0.3);
+}
+
+.ai_btn_generate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(102,126,234,0.45);
+}
+
+/* Spinner inside AI buttons */
+.ai_spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== HASHTAG SUGGESTIONS ===== */
+.hashtag_suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 8px;
+  animation: fadeSlideIn 0.3s ease;
+}
+
+.hashtag_hint {
+  font-size: 0.76rem;
+  color: #999;
+  font-style: italic;
+  margin-right: 2px;
+}
+
+.hashtag_chip {
+  background: rgba(102,126,234,0.1);
+  border: 1.5px solid rgba(102,126,234,0.35);
+  color: #667eea;
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hashtag_chip:hover {
+  background: #667eea;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(102,126,234,0.35);
+}
+
+/* ===== AVATAR CREATOR ===== */
+.avatar_creator_overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(6px);
+}
+
+.avatar_creator_modal {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px;
+  padding: 0;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+  animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+.avatar_creator_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.avatar_creator_header h5 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.avatar_close_btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #888;
+  line-height: 1;
+  padding: 0;
+}
+
+.avatar_creator_body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
+
+.avatar_preview_box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  gap: 8px;
+}
+
+.avatar_preview_label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0;
+}
+
+.avatar_options_scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px 20px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.avatar_section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avatar_section_label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #aaa;
+}
+
+.avatar_opts_row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.avatar_opt_btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 64px;
+}
+
+.avatar_opt_btn span {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.avatar_opt_btn small {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #888;
+}
+
+.avatar_opt_btn.active {
+  border-color: #667eea;
+  background: rgba(102,126,234,0.1);
+}
+
+.avatar_opt_btn.active small {
+  color: #667eea;
+}
+
+.avatar_opt_btn:hover:not(.active) {
+  border-color: rgba(102,126,234,0.4);
+  background: rgba(102,126,234,0.06);
+}
+
+.avatar_color_row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.avatar_color_swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.avatar_color_swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.avatar_color_swatch.active {
+  border: 3px solid #667eea;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #667eea;
+  transform: scale(1.1);
+}
+
+.avatar_creator_footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 24px 20px;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.avatar_save_btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 11px 28px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(102,126,234,0.3);
+}
+
+.avatar_save_btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(102,126,234,0.45);
+}
+
+.avatar_save_btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.avatar_cancel_btn {
+  background: none;
+  border: none;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ===== Avatar Creator prompt on profile ===== */
+.avatar_prompt_banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+  border: 1.5px dashed rgba(102,126,234,0.4);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.avatar_prompt_text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.avatar_prompt_btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s;
+}
+
+.avatar_prompt_btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(102,126,234,0.35);
+}

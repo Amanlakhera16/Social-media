@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { GLOBALTYPES } from "../../redux/actions/globalTypes";
 import { updateProfileUser } from "../../redux/actions/profileAction";
-
 import { checkImage } from "../../utils/imageUpload";
+import AvatarCreator from "../AvatarCreator";
+import '../../styles/ai_avatar.css';
 
 const EditProfile = ({ setOnEdit }) => {
   const initialState = {
@@ -17,6 +18,7 @@ const EditProfile = ({ setOnEdit }) => {
   const [userData, setUserData] = useState(initialState);
   const { fullname, mobile, address, website, story, gender } = userData;
   const [avatar, SetAvatar] = useState("");
+  const [showAvatarCreator, setShowAvatarCreator] = useState(false);
   const { auth, theme } = useSelector((state) => state);
   const dispatch = useDispatch();
 
@@ -72,6 +74,26 @@ const EditProfile = ({ setOnEdit }) => {
             />
           </span>
         </div>
+
+        {/* Avatar Creator prompt/button */}
+        <div className="avatar_prompt_banner">
+          <span className="avatar_prompt_text">
+            {auth.user.hasCustomAvatar
+              ? "🎨 You have a custom avatar"
+              : "✨ No profile photo? Create a personalized avatar!"}
+          </span>
+          <button
+            type="button"
+            className="avatar_prompt_btn"
+            onClick={() => setShowAvatarCreator(true)}
+          >
+            {auth.user.hasCustomAvatar ? "Edit Avatar" : "Create Avatar"}
+          </button>
+        </div>
+
+        {showAvatarCreator && (
+          <AvatarCreator onClose={() => setShowAvatarCreator(false)} />
+        )}
 
         <div className="form_group">
           <label htmlFor="fullname">Full Name</label>

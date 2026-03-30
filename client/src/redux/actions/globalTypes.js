@@ -6,6 +6,7 @@ export const GLOBALTYPES = {
   MODAL: "MODAL",
   USER_TYPE: "USER_TYPE",
   SOCKET: "SOCKET",
+  ANON_MODAL: "ANON_MODAL",
 };
 
 export const EditData = (data, id, post) => {

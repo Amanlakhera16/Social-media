@@ -78,6 +78,14 @@ const userSchema = new Schema(
       type: Array,
       default: [],
     },
+    avatarConfig: {
+      type: Object,
+      default: null,
+    },
+    hasCustomAvatar: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -74,6 +74,7 @@ app.use('/api', require('./routes/commentRouter'));
 app.use('/api', require('./routes/adminRouter'));
 app.use('/api', require('./routes/notifyRouter'));
 app.use('/api', require('./routes/messageRouter'));
+app.use('/api', require('./routes/aiRouter'));
 //#endregion
 
 app.get('/', (req, res) => {

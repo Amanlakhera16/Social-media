@@ -20,6 +20,9 @@ router.get("/user_posts/:id", auth, postCtrl.getUserPosts);
 
 router.get("/post_discover", auth, postCtrl.getPostDiscover);
 
+router.post("/anon_post", auth, postCtrl.createAnonymousPost);
+router.get("/anon_posts", auth, postCtrl.getAnonymousPosts);
+
 router.patch("/savePost/:id", auth, postCtrl.savePost);
 router.patch("/unSavePost/:id", auth, postCtrl.unSavePost);
 router.get("/getSavePosts", auth, postCtrl.getSavePost);

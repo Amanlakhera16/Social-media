@@ -24,6 +24,11 @@ const postSchema = new Schema(
     user: {
       type: mongoose.Types.ObjectId,
       ref: "user",
+      default: null,
+    },
+    isAnonymous: {
+      type: Boolean,
+      default: false,
     },
     reports: [
       {

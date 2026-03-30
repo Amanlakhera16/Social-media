@@ -46,7 +46,9 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
+        sameSite: config.env === 'production' ? 'none' : 'lax',
+        secure: config.env === 'production',
+        maxAge: 15 * 24 * 60 * 60 * 1000, // validity of 15 days
       });
 
       res.json({
@@ -159,8 +161,9 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        sameSite: "lax",
-        maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
+        sameSite: config.env === 'production' ? 'none' : 'lax',
+        secure: config.env === 'production',
+        maxAge: 15 * 24 * 60 * 60 * 1000, // validity of 15 days
       });
 
       res.json({
@@ -197,7 +200,9 @@ const authCtrl = {
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
-        maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
+        sameSite: config.env === 'production' ? 'none' : 'lax',
+        secure: config.env === 'production',
+        maxAge: 15 * 24 * 60 * 60 * 1000, // validity of 15 days
       });
 
       res.json({
@@ -263,7 +268,7 @@ const createAccessToken = (payload) => {
 
 const createRefreshToken = (payload) => {
   return jwt.sign(payload, config.refresh_token_secret, {
-    expiresIn: "30d",
+    expiresIn: "15d",
   });
 };
 

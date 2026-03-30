@@ -168,6 +168,22 @@ const userCtrl = {
       next(err);
     }
   },
+
+  updateAvatarConfig: async (req, res, next) => {
+    try {
+      const { avatarConfig } = req.body;
+
+      const updatedUser = await Users.findOneAndUpdate(
+        { _id: req.user._id },
+        { avatarConfig, hasCustomAvatar: true },
+        { new: true }
+      ).select('-password');
+
+      res.json({ msg: "Avatar saved successfully.", user: updatedUser });
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 module.exports = userCtrl;

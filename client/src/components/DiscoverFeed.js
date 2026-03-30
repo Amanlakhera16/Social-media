@@ -38,7 +38,8 @@ const CONTENT_TYPES = {
   POEM: { label: "Poem", emoji: "💔", color: "#9b59b6" },
   SPORTS: { label: "Sports", emoji: "🏀", color: "#e74c3c" },
   JOBS: { label: "Jobs", emoji: "💼", color: "#16a085" },
-  USER: { label: "User Post", emoji: "👤", color: "#3498db" }
+  USER: { label: "User Post", emoji: "👤", color: "#3498db" },
+  ANON: { label: "Anonymous", emoji: "👻", color: "#2c2c3e" }
 };
 
 // --- AXIOS INSTANCE FOR EXTERNAL APIS (Fixes CORS with global credentials) ---
@@ -144,7 +145,7 @@ const DiscoverFeed = () => {
     };
 
     const renderPost = (post) => {
-        const typeInfo = CONTENT_TYPES[post.type] || CONTENT_TYPES.NEWS;
+        const typeInfo = post.isAnonymous ? CONTENT_TYPES.ANON : (CONTENT_TYPES[post.type] || CONTENT_TYPES.NEWS);
 
         return (
             <div key={post.id || post._id} className="discover_post_card outer-shadow">
@@ -155,10 +156,14 @@ const DiscoverFeed = () => {
                 {post.type === 'USER' ? (
                     <div className="user_post_content">
                         <div className="d-flex align-items-center mb-2">
-                           <img src={post.user.avatar} alt="" className="user_mini_avatar" />
-                           <Link to={`/profile/${post.user._id}`} className="ms-2 user_name_link">
-                             {post.user.username}
-                           </Link>
+                           <img src={post.isAnonymous ? "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" : post.user.avatar} alt="" className="user_mini_avatar" />
+                           {post.isAnonymous ? (
+                             <span className="ms-2 fw-bold text-muted">Anonymous 👻</span>
+                           ) : (
+                             <Link to={`/profile/${post.user._id}`} className="ms-2 user_name_link">
+                               {post.user.username}
+                             </Link>
+                           )}
                         </div>
                         <p className="user_post_text">{post.content}</p>
                         <div className="user_post_images">

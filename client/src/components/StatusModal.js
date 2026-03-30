@@ -4,6 +4,8 @@ import { GLOBALTYPES } from "../redux/actions/globalTypes";
 import { createPost, updatePost } from "../redux/actions/postAction";
 import Icons from "./Icons";
 import { imageShow, videoShow } from "../utils/mediaShow";
+import axios from "axios";
+import "../styles/ai_avatar.css";
 
 const StatusModal = () => {
   const { auth, theme, status, socket } = useSelector((state) => state);
@@ -16,23 +18,22 @@ const StatusModal = () => {
   const refCanvas = useRef();
   const [tracks, setTracks] = useState("");
 
+  // AI state
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiMode, setAiMode] = useState(null); // null | 'enhance' | 'generate'
+  const [hashtags, setHashtags] = useState([]);
+
   const handleChangeImages = (e) => {
     const files = [...e.target.files];
     let err = "";
     let newImages = [];
 
     files.forEach((file) => {
-      if (!file) {
-        return (err = "File does not exist.");
-      }
-      if (file.size > 1024 * 1024 * 5) {
-        return (err = "Image size must be less than 5 mb.");
-      }
+      if (!file) return (err = "File does not exist.");
+      if (file.size > 1024 * 1024 * 5) return (err = "Image size must be less than 5 mb.");
       return newImages.push(file);
     });
-    if (err) {
-      dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
-    }
+    if (err) dispatch({ type: GLOBALTYPES.ALERT, payload: { error: err } });
     setImages([...images, ...newImages]);
   };
 
@@ -60,13 +61,10 @@ const StatusModal = () => {
   const handleCapture = () => {
     const width = videoRef.current.clientWidth;
     const height = videoRef.current.clientHeight;
-
     refCanvas.current.setAttribute("width", width);
     refCanvas.current.setAttribute("height", height);
-
     const ctx = refCanvas.current.getContext("2d");
     ctx.drawImage(videoRef.current, 0, 0, width, height);
-
     let URL = refCanvas.current.toDataURL();
     setImages([...images, { camera: URL }]);
   };
@@ -74,6 +72,60 @@ const StatusModal = () => {
   const handleStopStream = () => {
     tracks.stop();
     setStream(false);
+  };
+
+  // AI Handlers
+  const handleAIEnhance = async () => {
+    if (!content.trim()) return;
+    setAiLoading(true);
+    setAiMode("enhance");
+    setHashtags([]);
+    try {
+      const res = await axios.post(
+        "/api/ai/enhance",
+        { caption: content },
+        { headers: { Authorization: auth.token } }
+      );
+      setContent(res.data.enhancedCaption);
+      setHashtags(res.data.hashtags || []);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: "AI enhancement failed. Please try again." },
+      });
+    } finally {
+      setAiLoading(false);
+      setAiMode(null);
+    }
+  };
+
+  const handleAIGenerate = async () => {
+    if (!content.trim()) return;
+    setAiLoading(true);
+    setAiMode("generate");
+    setHashtags([]);
+    try {
+      const res = await axios.post(
+        "/api/ai/generate",
+        { prompt: content },
+        { headers: { Authorization: auth.token } }
+      );
+      setContent(res.data.generatedCaption);
+      setHashtags(res.data.hashtags || []);
+    } catch (err) {
+      dispatch({
+        type: GLOBALTYPES.ALERT,
+        payload: { error: "AI generation failed. Please try again." },
+      });
+    } finally {
+      setAiLoading(false);
+      setAiMode(null);
+    }
+  };
+
+  const addHashtag = (tag) => {
+    setContent((prev) => prev + (prev.endsWith(" ") || prev === "" ? "" : " ") + tag + " ");
+    setHashtags((prev) => prev.filter((h) => h !== tag));
   };
 
   const handleSubmit = (e) => {
@@ -93,13 +145,9 @@ const StatusModal = () => {
 
     setContent("");
     setImages([]);
-    if (tracks) {
-      tracks.stop();
-    }
-    dispatch({
-      type: GLOBALTYPES.STATUS,
-      payload: false,
-    });
+    setHashtags([]);
+    if (tracks) tracks.stop();
+    dispatch({ type: GLOBALTYPES.STATUS, payload: false });
   };
 
   useEffect(() => {
@@ -109,22 +157,24 @@ const StatusModal = () => {
     }
   }, [status]);
 
+  const showAIButtons = content.trim().length > 0;
+
   return (
     <div className="status_modal">
       <form onSubmit={handleSubmit}>
         <div className="status_header">
           <h5 className="m-0">Create Post</h5>
-          <span
-            onClick={() =>
-              dispatch({ type: GLOBALTYPES.STATUS, payload: false })
-            }
-          >
+          <span onClick={() => dispatch({ type: GLOBALTYPES.STATUS, payload: false })}>
             &times;
           </span>
         </div>
+
         <div className="status_body">
           <textarea
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => {
+              setContent(e.target.value);
+              if (!e.target.value.trim()) setHashtags([]);
+            }}
             value={content}
             name="content"
             placeholder={`${auth.user.username}, What's on your mind?`}
@@ -134,6 +184,55 @@ const StatusModal = () => {
               background: theme ? "rgb(0,0,0,0.3)" : "",
             }}
           />
+
+          {/* AI Toolbar — only visible when user has typed something */}
+          {showAIButtons && (
+            <div className="ai_toolbar">
+              <button
+                type="button"
+                className={`ai_btn ai_btn_enhance ${aiMode === "enhance" ? "loading" : ""}`}
+                onClick={handleAIEnhance}
+                disabled={aiLoading}
+                title="Improve your caption with AI"
+              >
+                {aiMode === "enhance" && aiLoading ? (
+                  <><span className="ai_spinner" /> Enhancing...</>
+                ) : (
+                  <>✨ Enhance with AI</>
+                )}
+              </button>
+              <button
+                type="button"
+                className={`ai_btn ai_btn_generate ${aiMode === "generate" ? "loading" : ""}`}
+                onClick={handleAIGenerate}
+                disabled={aiLoading}
+                title="Generate a caption from your keywords"
+              >
+                {aiMode === "generate" && aiLoading ? (
+                  <><span className="ai_spinner" /> Generating...</>
+                ) : (
+                  <>🤖 Generate with AI</>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Hashtag suggestions */}
+          {hashtags.length > 0 && (
+            <div className="hashtag_suggestions">
+              <span className="hashtag_hint">Tap to add:</span>
+              {hashtags.map((tag, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="hashtag_chip"
+                  onClick={() => addHashtag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="d-flex">
             <div className="flex-fill"></div>
@@ -147,9 +246,7 @@ const StatusModal = () => {
                   imageShow(img.camera, theme)
                 ) : img.url ? (
                   <>
-                    {img.url.match(/video/i)
-                      ? videoShow(img.url)
-                      : imageShow(img.url)}
+                    {img.url.match(/video/i) ? videoShow(img.url) : imageShow(img.url)}
                   </>
                 ) : (
                   <>
@@ -173,7 +270,6 @@ const StatusModal = () => {
                 autoPlay
                 muted
               />
-
               <span onClick={handleStopStream}>&times;</span>
               <canvas style={{ display: "none" }} ref={refCanvas} />
             </div>
@@ -200,6 +296,7 @@ const StatusModal = () => {
             )}
           </div>
         </div>
+
         <div className="status_footer">
           <button type="submit" className="btn btn-primary w-100">
             Post

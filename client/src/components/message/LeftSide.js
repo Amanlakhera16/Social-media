@@ -72,7 +72,7 @@ const LeftSide = () => {
 
     return (
         <>
-            <form className="message_header" onSubmit={handleSearch}>
+            <form className="message_header message_header--list" onSubmit={handleSearch}>
                 <input
                     type="text"
                     value={search}
@@ -107,13 +107,9 @@ const LeftSide = () => {
                                 onClick={() => handleAddUser(user)}
                             >
                                 <UserCard user={user} msg={true}>
-                                    {
-                                        user.online 
-                                        ? <i className="fas fa-circle text-success" />
-                                        : auth.user.following.find(item => item._id === user._id)
-                                            ? <i className="fas fa-circle" />
-                                            : <i className="fas fa-circle" />
-                                    }
+                                    {message.unread?.[user._id] > 0 && (
+                                        <span className="message_unread_dot" aria-label="Unread message" />
+                                    )}
                                 </UserCard>
                             </div>
                         ))}

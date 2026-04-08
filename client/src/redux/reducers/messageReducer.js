@@ -5,7 +5,8 @@ const initialState = {
     resultUsers: 0,
     data: [],
     resultData: 0,
-    firstLoad: false 
+    firstLoad: false,
+    unread: {}
 };
 
 const messageReducer = (state = initialState, action) => {
@@ -60,8 +61,28 @@ const messageReducer = (state = initialState, action) => {
         return {
             ...state,
             users: state.users.filter(item => item._id !== action.payload),
-            data: []
+            data: [],
+            unread: { ...state.unread, [action.payload]: 0 }
         };
+
+    case MESSAGE_TYPES.SET_UNREAD:
+      return {
+        ...state,
+        unread: {
+          ...state.unread,
+          [action.payload.userId]:
+            (state.unread[action.payload.userId] || 0) + 1,
+        },
+      };
+
+    case MESSAGE_TYPES.CLEAR_UNREAD:
+      return {
+        ...state,
+        unread: {
+          ...state.unread,
+          [action.payload]: 0,
+        },
+      };
 
     default:
       return state;

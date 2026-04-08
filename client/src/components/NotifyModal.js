@@ -27,39 +27,38 @@ const NotifyModal = () => {
     };
 
     return (
-      <div
-        className="mt-1"
-        style={{
-          minWidth: "280px",
-          boxShadow: "5px 8px 8px var(--c2) ,-3px -3px 8px var(--c3)",
-          background: "white",
-          borderRadius: "10px",
-          borderTopRightRadius: "0",
-        }}
-      >
-        <div className="d-flex justify-content-between align-items-center">
+      <div className="notify_modal mt-1">
+        <div className="notify_header d-flex justify-content-between align-items-center">
           <h3>Notifications</h3>
-          {notify.sound ? (
-            <i
-              className="fas fa-bell text-danger"
-              style={{ fontSize: "1.2rem", cursor: "pointer" }}
-              onClick={handleSound}
+          <div className="d-flex align-items-center">
+            {notify.sound ? (
+              <i
+                className="fas fa-bell text-danger me-3"
+                style={{ fontSize: "1.2rem", cursor: "pointer" }}
+                onClick={handleSound}
+              />
+            ) : (
+              <i
+                className="fas fa-bell-slash text-danger me-3"
+                style={{ fontSize: "1.2rem", cursor: "pointer" }}
+                onClick={handleSound}
+              />
+            )}
+            <i 
+              className="fas fa-times text-dark d-md-none" 
+              style={{ fontSize: "1.5rem", cursor: "pointer" }}
+              onClick={() => document.body.click()}
+              title="Close Notifications"
             />
-          ) : (
-            <i
-              className="fas fa-bell-slash text-danger"
-              style={{ fontSize: "1.2rem", cursor: "pointer" }}
-              onClick={handleSound}
-            />
-          )}
+          </div>
         </div>
         <hr className="mt-1" />
         {notify.data.length === 0 && (
           <span className="text-muted w-100 text-center">No Notifications</span>
         )}
-        <div style={{ maxHeight: "calc(100vh - 200px)", overflow: "auto" }}>
+        <div className="notify_list">
           {notify.data.map((msg, index) => (
-            <div className="px-2 mb-3" key={index}>
+            <div className={`notify_item px-2 mb-3 ${!msg.isRead ? "unread" : ""}`} key={index}>
               <Link
                 to={`${msg.url}`}
                 style={{ textDecoration: "none" }}
@@ -88,7 +87,7 @@ const NotifyModal = () => {
         </div>
         <hr className="my-1" />
         <div
-          className="text-end my-auto me-2 color-c1"
+          className="notify_footer text-end my-auto me-2 color-c1"
           style={{ cursor: "pointer" }}
           onClick={handleDeleteAll}
         >

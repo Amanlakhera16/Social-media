@@ -3,26 +3,16 @@ import React from "react";
 
 const Loading = () => {
   return (
-    <div
-      style={{
-        background: "white",
-        top: 0,
-        left: 0,
-        zIndex: 50,
-        opacity: 0.7
-      }}
-      className="position-fixed vh-100 w-100   d-flex justify-content-center align-items-center"
-    >
-      <div className="loading">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+    <div className="nextgen-loading-overlay">
+      <div className="nextgen-loader">
+        <div className="loader-ring"></div>
+        <div className="loader-ring"></div>
+        <div className="loader-center">SM</div>
       </div>
 
-      <span className="loading_text">
+      <div className="nextgen-loading-text">
         Loading
-      </span>
+      </div>
     </div>
   );
 };

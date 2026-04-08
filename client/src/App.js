@@ -57,6 +57,105 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    const positionDropdown = (dropdownEl) => {
+      if (!dropdownEl) return;
+      const menu = dropdownEl.querySelector(".dropdown-menu");
+      const toggle =
+        dropdownEl.querySelector('[data-bs-toggle="dropdown"]') ||
+        dropdownEl.querySelector(".dropdown-toggle");
+      if (!menu || !toggle) return;
+
+      const viewportHeight = window.innerHeight;
+      const viewportWidth = window.innerWidth;
+      const isMobile = viewportWidth <= 768;
+      const toggleRect = toggle.getBoundingClientRect();
+
+      menu.style.position = "fixed";
+      menu.style.right = "auto";
+      menu.style.bottom = "auto";
+      menu.style.zIndex = "1055";
+
+      const menuRect = menu.getBoundingClientRect();
+      const spaceBelow = viewportHeight - toggleRect.bottom;
+      const spaceAbove = toggleRect.top;
+      const preferDown = isMobile
+        ? spaceBelow >= 120 || spaceBelow >= spaceAbove
+        : spaceBelow >= menuRect.height || spaceBelow >= spaceAbove;
+
+      const isNotify = menu.querySelector(".notify_modal");
+
+      if (isMobile && isNotify) {
+        const headerEl = document.querySelector(".header");
+        const menuBarEl = document.querySelector(".header .menu");
+        const headerHeight = headerEl
+          ? Math.round(headerEl.getBoundingClientRect().height)
+          : 0;
+        const menuHeight = menuBarEl
+          ? Math.round(menuBarEl.getBoundingClientRect().height)
+          : 0;
+
+        const width = Math.min(viewportWidth - 24, 420);
+        const left = Math.max(12, (viewportWidth - width) / 2);
+        const bottom = Math.max(12, menuHeight + 8);
+        const maxHeight = Math.max(
+          200,
+          viewportHeight - headerHeight - bottom - 8
+        );
+
+        menu.classList.remove("drop-up");
+        menu.style.top = "auto";
+        menu.style.bottom = `${Math.round(bottom)}px`;
+        menu.style.left = `${Math.round(left)}px`;
+        menu.style.width = `${Math.round(width)}px`;
+        menu.style.maxHeight = `${Math.round(maxHeight)}px`;
+        menu.style.overflowY = "auto";
+        return;
+      }
+
+      menu.classList.toggle("drop-up", !preferDown);
+
+      const top = preferDown
+        ? toggleRect.bottom + 8
+        : Math.max(8, toggleRect.top - menuRect.height - 8);
+
+      const maxHeight = preferDown
+        ? viewportHeight - top - 8
+        : toggleRect.top - 8;
+
+      const desiredLeft =
+        toggleRect.left + toggleRect.width / 2 - menuRect.width / 2;
+      const left = Math.min(
+        Math.max(8, desiredLeft),
+        viewportWidth - menuRect.width - 8
+      );
+
+      menu.style.top = `${Math.round(top)}px`;
+      menu.style.left = `${Math.round(left)}px`;
+      menu.style.maxHeight = `${Math.max(160, Math.round(maxHeight))}px`;
+      menu.style.overflowY = "auto";
+      menu.style.width = "";
+    };
+
+    const handleShown = (event) => {
+      positionDropdown(event.target);
+    };
+
+    const repositionOpenDropdowns = () => {
+      document.querySelectorAll(".dropdown.show").forEach(positionDropdown);
+    };
+
+    document.addEventListener("shown.bs.dropdown", handleShown);
+    window.addEventListener("resize", repositionOpenDropdowns);
+    window.addEventListener("scroll", repositionOpenDropdowns, true);
+
+    return () => {
+      document.removeEventListener("shown.bs.dropdown", handleShown);
+      window.removeEventListener("resize", repositionOpenDropdowns);
+      window.removeEventListener("scroll", repositionOpenDropdowns, true);
+    };
+  }, []);
+
    
 
   return (

@@ -10,6 +10,8 @@ export const MESSAGE_TYPES = {
   DELETE_MESSAGES: "DELETE_MESSAGES",
   DELETE_CONVERSATION: "DELETE_CONVERSATION",
   CHECK_ONLINE_OFFLINE: "CHECK_ONLINE_OFFLINE",
+  SET_UNREAD: "SET_UNREAD",
+  CLEAR_UNREAD: "CLEAR_UNREAD",
 };
 
 export const addUser = ({ user, message }) => async (dispatch) => {

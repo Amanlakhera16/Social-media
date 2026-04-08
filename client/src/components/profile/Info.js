@@ -42,16 +42,13 @@ const Info = ({id, auth, profile, dispatch}) => {
     return (
       <div className="info">
         {userData.map((user) => (
-          <div key={user._id} className="info_container">
-            <div
-              className="outer-shadow d-flex justify-content-center align-items-center"
-              style={{ borderRadius: "50%", height: "170px", width: "170px" }}
-            >
+          <div key={user._id} className="info_container profile_header">
+            <div className="profile_avatar_wrap outer-shadow">
               <Avatar src={user.avatar} size="supper-avatar" />
             </div>
 
-            <div className="info_content">
-              <div className="info_content_title">
+            <div className="info_content profile_meta">
+              <div className="info_content_title profile_title_row">
                 <h2>{user.username}</h2>
                 {user._id === currentUserId ? (
                   <>
@@ -80,7 +77,7 @@ const Info = ({id, auth, profile, dispatch}) => {
                 )}
               </div>
 
-              <div className="follow_btn">
+              <div className="follow_btn profile_stats">
                 <span className="mr-4" onClick={() => setShowFollowers(true)}>
                   {user.followers.length} Followers
                 </span>
@@ -89,12 +86,12 @@ const Info = ({id, auth, profile, dispatch}) => {
                 </span>
               </div>
 
-              <h6>
+              <h6 className="profile_name">
                 {user.fullname}{" "}
                 <span className="color-violet">{user.mobile}</span>
               </h6>
               <p className="m-0">{user.address}</p>
-              <h6>{user.email}</h6>
+              <h6 className="profile_email">{user.email}</h6>
               <a
                 style={{ textDecoration: "none" }}
                 href={user.website}
@@ -103,7 +100,7 @@ const Info = ({id, auth, profile, dispatch}) => {
               >
                 {user.website}
               </a>
-              <p>{user.story}</p>
+              <p className="profile_bio">{user.story}</p>
             </div>
 
             {onEdit && <EditProfile setOnEdit={setOnEdit} />}

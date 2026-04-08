@@ -16,6 +16,7 @@ const Menu = () => {
   const { auth, theme, notify } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { pathname } = useLocation();
+  const unreadNotifyCount = notify.data.filter((item) => !item.isRead).length;
 
   const isActive = (pn) => {
     if (pn === pathname) return "active";
@@ -41,15 +42,21 @@ const Menu = () => {
             aria-expanded="false"
           >
             <span
-              style={{ color: notify.data.length > 0 ? "var(--c1)" : "" }}
+              style={{ color: unreadNotifyCount > 0 ? "var(--c1)" : "" }}
               className={`material-icons `}
             >
               notifications
             </span>
-            <span className="notify_length">{notify.data.length}</span>
+            {unreadNotifyCount > 0 && (
+              <span className="notify_length">{unreadNotifyCount}</span>
+            )}
           </span>
 
-          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+          <div
+            className="dropdown-menu notify_dropdown_menu"
+            aria-labelledby="navbarDropdown"
+            data-bs-display="static"
+          >
             <NotifyModal />
           </div>
         </li>
@@ -64,7 +71,20 @@ const Menu = () => {
           >
             <Avatar src={auth.user.avatar} size="medium-avatar" />
           </span>
-          <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+          <ul
+            className="dropdown-menu profile_dropdown_menu"
+            aria-labelledby="navbarDropdown"
+            data-bs-display="static"
+          >
+            <div className="d-flex justify-content-between align-items-center d-md-none mb-4 px-2 profile-mobile-header">
+               <h3 className="m-0" style={{ fontWeight: 800 }}>Account</h3>
+               <i 
+                className="fas fa-times text-dark" 
+                style={{ fontSize: "1.8rem", cursor: "pointer" }}
+                onClick={() => document.body.click()}
+                title="Close Menu"
+              />
+            </div>
             <li>
               <Link
                 style={{ color: "white" }}
@@ -87,10 +107,6 @@ const Menu = () => {
                 {theme ? "Light mode" : "Dark mode"}
               </label>
             </li>
-            <li>
-              <hr className="dropdown-divider" />
-            </li>
-
             <li>
               <Link
                 style={{ color: "white" }}

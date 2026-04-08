@@ -123,9 +123,21 @@ const SocketClient = () => {
     socket.on("addMessageToClient", (msg) => {
       dispatch({ type: MESSAGE_TYPES.ADD_MESSAGE, payload: msg });
 
+      const isFromOtherUser = msg.sender !== auth.user._id;
+      if (isFromOtherUser) {
+        const activePath = window.location.pathname;
+        const isOnThread = activePath === `/message/${msg.sender}`;
+        if (!isOnThread) {
+          dispatch({
+            type: MESSAGE_TYPES.SET_UNREAD,
+            payload: { userId: msg.sender },
+          });
+        }
+      }
+
     });
     return () => socket.off("addMessageToClient");
-  }, [socket, dispatch]);
+  }, [socket, dispatch, auth.user._id]);
 
   return (
     <>

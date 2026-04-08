@@ -89,6 +89,7 @@ const RightSide = () => {
         if (id) {
             const getMessagesData = async () => {
                 dispatch({ type: MESSAGE_TYPES.GET_MESSAGES, payload: { messages: [], result: 0 } });
+                dispatch({ type: MESSAGE_TYPES.CLEAR_UNREAD, payload: id });
                 setPage(1);
                 await dispatch(getMessages({ auth, id }));
                 if (refDisplay.current) {
@@ -157,7 +158,15 @@ const RightSide = () => {
 
     return (
         <>
-            <div className="message_header" style={{cursor: 'pointer'}}>
+            <div className="message_header message_header--chat" style={{cursor: 'pointer'}}>
+                <button
+                    type="button"
+                    className="chat_back_btn"
+                    onClick={() => history.push('/message')}
+                    aria-label="Back to conversations"
+                >
+                    <i className="fas fa-arrow-left" />
+                </button>
                 {user._id && (
                     <UserCard user={user}>
                         <div className="d-flex align-items-center">

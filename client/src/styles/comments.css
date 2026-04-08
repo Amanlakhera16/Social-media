@@ -3,22 +3,25 @@
 .comment_input{
     display: flex;
     align-items: center;
+    gap: 8px;
 }
 
 .comment_input input{
-    background: #f7f7f7;
-    border: none;
+    background: rgba(248, 250, 252, 0.9);
+    border: 1px solid rgba(15, 23, 42, 0.08);
     outline: none;
     flex: 1;
     overflow: auto;
+    padding: 8px 12px;
+    border-radius: 999px;
 }
 
 .comment_input .postBtn{
     border: none;
     outline: none;
-    background: #f7f7f7;
+    background: transparent;
     font-weight: 600;
-    color: crimson;
+    color: var(--accent);
 }
 
 
@@ -27,24 +30,25 @@
 
 /* #region Comment display */
 .comment_display{
-    padding: 10px 25px;
+    padding: 10px 20px;
 
 }
 
 .comment_card .comment_content{
-    background: #eee;
-    padding: 7px;
-    border-radius: 10px;
+    background: rgba(248, 250, 252, 0.9);
+    padding: 10px 12px;
+    border-radius: 14px;
     border-top-left-radius: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 1px solid rgba(15, 23, 42, 0.06);
 
 }
 
 .comment_card .comment_content .readMore{
     cursor: pointer;
-    color: crimson;
+    color: var(--accent);
 }
 
 .comment_card .comment_content .nav-item {
@@ -69,14 +73,14 @@
 }
 
 .comment_card .comment_content .dropdown-item:hover{
-    background: var(--pink);
+    background: var(--background-2);
 }
 
 .comment_card .comment_content textarea{
     border: none;
     outline: none;
     width: 100%;
-    background: #eee;
+    background: transparent;
 }
 
 /* #endregion */
